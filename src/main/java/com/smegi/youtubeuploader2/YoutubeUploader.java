@@ -7,10 +7,10 @@ package com.smegi.youtubeuploader2;
 
 /**
  *
- * @author Portal1
+ * @author Sergej
  */
 public class YoutubeUploader {
     public static void main(String args[]) {
-        System.out.println("asdf!");
+        System.out.println("asdf");
     }
 }
