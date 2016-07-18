@@ -16,7 +16,10 @@ public class YoutubeUploader {
 
     public static void main(String args[]) throws IOException, InterruptedException {
 
+        ImageGenerator ig = new ImageGenerator();
+        ig.generateImage();
         VideoGenerator vg = new VideoGenerator();
         vg.Generate();
+        
     }
 }
