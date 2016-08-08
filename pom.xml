@@ -11,4 +11,20 @@
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
     <name>YoutubeUploader</name>
+    <build>
+    <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.4</version>
+          <configuration>
+              <archive>
+                  <manifest>
+                      <mainClass>com.smegi.youtubeuploader2.YoutubeUploader</mainClass>
+                  </manifest>
+              </archive>
+          </configuration>
+      </plugin>
+  </plugins>
+</build>
 </project>

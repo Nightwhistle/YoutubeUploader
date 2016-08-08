@@ -5,8 +5,10 @@
  */
 package com.smegi.youtubeuploader2;
 
+import java.awt.List;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.ArrayList;
 
 /**
  *
@@ -14,12 +16,27 @@ import java.io.InputStream;
  */
 public class YoutubeUploader {
 
-    public static void main(String args[]) throws IOException, InterruptedException {
+    public static void main(String args[]) {
 
-        ImageGenerator ig = new ImageGenerator();
-        ig.generateImage();
-        VideoGenerator vg = new VideoGenerator();
-        vg.Generate();
+        ArrayList<File> files = new ArrayList<File>();
+        searchFolder("src", files);
         
+        for (File f : files) {
+            System.out.println(f.getAbsoluteFile());
+        }
+    }
+    
+    public static void searchFolder(String directoryName, ArrayList<File> files) {
+        File directory = new File(directoryName);
+        
+        File[] filesList = directory.listFiles();
+        
+        for (File file : filesList) {
+            if (file.isFile()) {
+                files.add(file);
+            } else if (file.isDirectory()) {
+                searchFolder(file.getAbsolutePath(), files);
+            }
+        }
     }
 }
