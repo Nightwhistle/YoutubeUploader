@@ -1,4 +1,4 @@
-package com.smegi.youtubeuploader2;
+package com.smegi.youtubeuploader;
 
 import java.awt.Font;
 import java.awt.Graphics;

@@ -20,7 +20,7 @@
           <configuration>
               <archive>
                   <manifest>
-                      <mainClass>com.smegi.youtubeuploader2.YoutubeUploader</mainClass>
+                      <mainClass>com.smegi.youtubeuploader.YoutubeUploader</mainClass>
                   </manifest>
               </archive>
           </configuration>

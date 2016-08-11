@@ -1,4 +1,4 @@
-package com.smegi.youtubeuploader2;
+package com.smegi.youtubeuploader;
 
 import java.io.IOException;
 import java.io.InputStream;
