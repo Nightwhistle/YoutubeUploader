@@ -5,10 +5,8 @@
  */
 package com.smegi.youtubeuploader;
 
-import com.smegi.youtubeuploader.Model.*;
+import com.smegi.youtubeuploader.Model.Band;
 import java.util.List;
-import java.io.File;
-import java.util.ArrayList;
 
 /**
  *
@@ -17,7 +15,19 @@ import java.util.ArrayList;
 public class YoutubeUploader {
 
     public static void main(String args[]) {
-
+        
+        
+        
+        Search s = new Search();
+        List<Band> bands = s.getBands("e:\\projects\\youtubeuploader");
+        
+        bands.stream().forEach(a -> {
+            System.out.println(a.getName());
+            System.out.println("Background: " + a.getBackground());
+            a.getSongs().stream().forEach(song -> {
+                System.out.println("    - " + song.getName());
+            });
+        });
     
     }
 }

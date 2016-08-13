@@ -10,7 +10,7 @@ import java.util.List;
 public class Band {
     private String name;
     private List<Song> songs = new ArrayList<>();
-    private Background background;
+    private String background;
 
     public String getName() {
         return name;
@@ -31,14 +31,13 @@ public class Band {
     public void addSong(Song song) {
         songs.add(song);
     }
-
-    public Background getBackground() {
+    
+    public String getBackground() {
         return background;
     }
 
-    public void setBackground(Background background) {
+    public void setBackground(String background) {
         this.background = background;
     }
 
-    
 }
