@@ -30,6 +30,7 @@ public class Search {
                         band.setBackground(songFile.getAbsolutePath());
                         continue;
                     }
+                    
                     Song song = new Song();
                     song.setName(songFile.getName());
                     song.setPath(songFile.getAbsolutePath());
