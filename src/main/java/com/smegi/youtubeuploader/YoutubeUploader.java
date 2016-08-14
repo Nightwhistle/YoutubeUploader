@@ -20,14 +20,8 @@ public class YoutubeUploader {
         
         Search s = new Search();
         List<Band> bands = s.getBands("e:\\projects\\youtubeuploader");
+        VideoGenerator vg = new VideoGenerator(bands);
+        vg.Generate();
         
-        bands.stream().forEach(a -> {
-            System.out.println(a.getName());
-            System.out.println("Background: " + a.getBackground());
-            a.getSongs().stream().forEach(song -> {
-                System.out.println("    - " + song.getName());
-            });
-        });
-    
     }
 }

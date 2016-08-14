@@ -11,6 +11,15 @@ public class Band {
     private String name;
     private List<Song> songs = new ArrayList<>();
     private String background;
+    private String path;
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
 
     public String getName() {
         return name;

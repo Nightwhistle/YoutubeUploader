@@ -22,6 +22,7 @@ public class Search {
             if (file.isDirectory()) {
                 Band band = new Band();
                 band.setName(file.getName());
+                band.setPath(file.getAbsolutePath());
                 File[] songsFiles = file.listFiles();
 
                 for (File songFile : songsFiles) {
