@@ -10,9 +10,18 @@ import java.util.List;
 public class Band {
     private String name;
     private List<Song> songs = new ArrayList<>();
+    private List<MusicVideo> videos = new ArrayList<>();
     private String background;
     private String path;
 
+    public List<MusicVideo> getMusicVideos() {
+        return videos;
+    }
+
+    public void setMusicVideos(List<MusicVideo> videos) {
+        this.videos = videos;
+    }
+    
     public String getPath() {
         return path;
     }
@@ -41,6 +50,10 @@ public class Band {
         songs.add(song);
     }
     
+    public void addMusicVideo(MusicVideo video) {
+        videos.add(video);
+    }
+    
     public String getBackground() {
         return background;
     }
@@ -48,5 +61,7 @@ public class Band {
     public void setBackground(String background) {
         this.background = background;
     }
+
+    
 
 }

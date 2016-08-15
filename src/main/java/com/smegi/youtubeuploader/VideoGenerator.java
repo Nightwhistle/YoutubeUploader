@@ -2,6 +2,7 @@ package com.smegi.youtubeuploader;
 
 import com.smegi.youtubeuploader.Model.Band;
 import com.smegi.youtubeuploader.Model.Song;
+import com.smegi.youtubeuploader.Model.MusicVideo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -51,6 +52,10 @@ public class VideoGenerator {
                     };
                     outputDrainer.start();
                     p.waitFor();
+                    MusicVideo video = new MusicVideo();
+                    video.setName(song.getName());
+                    video.setPath(outPath);
+                    band.addMusicVideo(video);
                 }
             }
         } catch (Exception e) {

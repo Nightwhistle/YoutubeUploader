@@ -5,6 +5,10 @@
  */
 package com.smegi.youtubeuploader;
 
+import com.smegi.youtubeuploader.Model.Band;
+import com.smegi.youtubeuploader.youtube.UploadVideo;
+import java.util.List;
+
 /**
  *
  * @author Sergej
@@ -15,10 +19,13 @@ public class YoutubeUploader {
         
        
         
-//        Search s = new Search();
-//        List<Band> bands = s.getBands("D:\\netbeansprojects\\resource");
-//        VideoGenerator vg = new VideoGenerator(bands);
-//        vg.Generate();
+        Search s = new Search();
+        List<Band> bands = s.getBands("e:\\Projects\\YoutubeUploader\\");
+        VideoGenerator vg = new VideoGenerator(bands);
+        vg.Generate();
+        
+        UploadVideo uv = new UploadVideo();
+        uv.Upload(bands);
         
     }
 }
