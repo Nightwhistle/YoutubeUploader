@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class DriveUpload {
@@ -83,7 +85,7 @@ public class DriveUpload {
     public static Credential authorize() throws IOException, Exception {
         
         // Load client secrets.
-        Reader clientSecretReader = new InputStreamReader(new FileInputStream (new java.io.File("d:\\NetBeansProjects\\YoutubeUploader\\src\\main\\resources\\client_secrets.json")));
+        Reader clientSecretReader = new InputStreamReader(new FileInputStream (new java.io.File("E:\\NetBeansProjects\\YoutubeUploader\\src\\main\\resources\\client_secrets.json")));
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, clientSecretReader);
 
         // Build flow and trigger user authorization request.
@@ -117,13 +119,22 @@ public class DriveUpload {
     public static void main(String[] args) throws IOException, Exception {
         // Build a new authorized API client service.
         Drive service = getDriveService();
-        File metaData = new File();
-        metaData.setName("Testing upload file");
         
-        java.io.File filePath = new java.io.File("d:\\NetBeansProjects\\YoutubeUploader\\src\\Alan Walker - Faded.mp3");
+        // Folder TEST on smegibrn@gmail drive
+        String folderId = "0B6zT2QOu7WjjTW56aEp4YzRxa2M";
+        
+        // Setting metadate for file
+        File metaData = new File();
+        metaData.setName("Test MP3 upload");
+        metaData.setParents(Collections.singletonList(folderId));
+        
+        // Loading file
+        java.io.File filePath = new java.io.File("e:\\Projects\\YoutubeUploader\\Breaking Benjamin\\Breaking Benjamin - Fade Away.mp3");
         FileContent content = new FileContent("audio/mp3", filePath);
+        
+        // Creating upload file
         File fileTest = service.files().create(metaData, content)
-                .setFields("files(id)")
+                .setFields("id, parents")
                 .execute();
         
         // Print the names and IDs for up to 10 files.
