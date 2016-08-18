@@ -11,7 +11,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.smegi.youtubeuploader.youtube;
+package com.smegi.youtubeuploader.uploads;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
@@ -25,7 +25,6 @@ import com.google.api.services.youtube.model.VideoStatus;
 import com.google.common.collect.Lists;
 import com.smegi.youtubeuploader.Model.Band;
 import com.smegi.youtubeuploader.Model.MusicVideo;
-import com.smegi.youtubeuploader.Model.Song;
 import java.io.FileInputStream;
 
 import java.io.IOException;

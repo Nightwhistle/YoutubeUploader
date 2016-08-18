@@ -6,7 +6,7 @@
 package com.smegi.youtubeuploader;
 
 import com.smegi.youtubeuploader.Model.Band;
-import com.smegi.youtubeuploader.youtube.UploadVideo;
+import com.smegi.youtubeuploader.uploads.UploadVideo;
 import java.util.List;
 
 /**

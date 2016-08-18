@@ -1,4 +1,4 @@
-package com.smegi.youtubeuploader.youtube;
+package com.smegi.youtubeuploader.uploads;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.StoredCredential;
