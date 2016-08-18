@@ -6,6 +6,7 @@ import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.FileContent;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.json.JsonFactory;
@@ -61,7 +62,7 @@ public class DriveUpload {
      * ~/.credentials/drive-java-quickstart
      */
     private static final List<String> SCOPES
-            = Arrays.asList(DriveScopes.DRIVE_METADATA_READONLY);
+            = Arrays.asList(DriveScopes.DRIVE);
 
     static {
         try {
@@ -116,21 +117,27 @@ public class DriveUpload {
     public static void main(String[] args) throws IOException, Exception {
         // Build a new authorized API client service.
         Drive service = getDriveService();
+        File metaData = new File();
+        metaData.setName("Testing upload file");
         
+        java.io.File filePath = new java.io.File("d:\\NetBeansProjects\\YoutubeUploader\\src\\Alan Walker - Faded.mp3");
+        FileContent content = new FileContent("audio/mp3", filePath);
+        File fileTest = service.files().create(metaData, content)
+                .setFields("files(id)")
+                .execute();
         
         // Print the names and IDs for up to 10 files.
         FileList result = service.files().list()
-                .setFields("nextPageToken, files(id, name)")
+                .setFields("nextPageToken, files(id, name, mimeType)")
                 .execute();
         List<File> files = result.getFiles();
-        System.out.println(result.getFiles().getClass());
 
         if (files == null || files.size() == 0) {
             System.out.println("No files found.");
         } else {
             System.out.println("Files:");
             for (com.google.api.services.drive.model.File file : files) {
-                System.out.printf("%s (%s)\n", file.getName(), file.getId());
+                System.out.printf("%s (%s) [%s]\n", file.getName(), file.getId(), file.getMimeType());
             }
         }
     }
