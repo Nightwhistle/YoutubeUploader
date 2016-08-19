@@ -6,6 +6,9 @@
 package com.smegi.youtubeuploader;
 
 import com.smegi.youtubeuploader.Model.Band;
+import com.smegi.youtubeuploader.Model.MusicVideo;
+import com.smegi.youtubeuploader.Model.Song;
+import com.smegi.youtubeuploader.uploads.DriveUpload;
 import com.smegi.youtubeuploader.uploads.UploadVideo;
 import java.util.List;
 
@@ -15,17 +18,26 @@ import java.util.List;
  */
 public class YoutubeUploader {
 
-    public static void main(String args[]) {
-        
-       
-        
+    public static void main(String args[]) throws Exception {
+
         Search s = new Search();
-        List<Band> bands = s.getBands("e:\\Projects\\YoutubeUploader\\");
+        List<Band> bands = s.getBands("d:\\NetBeansProjects\\Resource");
         VideoGenerator vg = new VideoGenerator(bands);
         vg.Generate();
         
-        UploadVideo uv = new UploadVideo();
-        uv.Upload(bands);
+        DriveUpload du = new DriveUpload();
+        du.upload(bands);
         
+        UploadVideo uv = new UploadVideo();
+        uv.upload(bands);
+        
+        System.out.println("--------------------------------");
+        System.out.println("---------FINAL CONSOLE----------");
+        
+        for (Band band : bands) {
+            for (MusicVideo song: band.getMusicVideos()) {
+                System.out.printf("%s - %s [%s]%n",band.getName(), song.getName(), song.getPath());
+            }
+        }
     }
 }

@@ -63,7 +63,7 @@ public class UploadVideo {
      *
      * @param bands
      */
-    public void Upload(List<Band> bands) {
+    public void upload(List<Band> bands) {
         this.bands = bands;
         // This OAuth 2.0 access scope allows an application to upload files
         // to the authenticated user's YouTube channel, but doesn't allow

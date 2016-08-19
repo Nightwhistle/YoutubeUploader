@@ -31,10 +31,12 @@ public class Search {
                         continue;
                     }
                     
+                    if (isMusicFile(songFile)) {
                     Song song = new Song();
                     song.setName(songFile.getName());
                     song.setPath(songFile.getAbsolutePath());
                     band.addSong(song);
+                    }
                 }
                 bands.add(band);
             }
@@ -48,5 +50,10 @@ public class Search {
         String extension = file.getName().substring(file.getName().length() - 3);
         return extension.equalsIgnoreCase("jpg") ||
                extension.equalsIgnoreCase("png");
+    }
+    
+    private boolean isMusicFile(File file) {
+        String extension = file.getName().substring(file.getName().length() - 3);
+        return extension.equalsIgnoreCase("mp3");
     }
 }

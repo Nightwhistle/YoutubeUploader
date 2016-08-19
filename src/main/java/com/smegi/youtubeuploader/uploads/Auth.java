@@ -53,7 +53,7 @@ public class Auth {
     public static Credential authorize(List<String> scopes, String credentialDatastore) throws IOException, Exception {
 
         // Load client secrets.  
-        Reader clientSecretReader = new InputStreamReader(new FileInputStream (new File("e:\\NetBeansProjects\\YoutubeUploader\\src\\main\\resources\\client_secrets.json")));
+        Reader clientSecretReader = new InputStreamReader(new FileInputStream (new File("D:\\NetBeansProjects\\YoutubeUploader\\src\\main\\resources\\client_secrets.json")));
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, clientSecretReader);
 
         // Checks that the defaults have been replaced (Default = "Enter X here").

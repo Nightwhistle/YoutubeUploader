@@ -17,13 +17,14 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
+import com.smegi.youtubeuploader.Model.Band;
+import com.smegi.youtubeuploader.Model.Song;
 import java.io.FileInputStream;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -83,9 +84,9 @@ public class DriveUpload {
      * @throws IOException
      */
     public static Credential authorize() throws IOException, Exception {
-        
+
         // Load client secrets.
-        Reader clientSecretReader = new InputStreamReader(new FileInputStream (new java.io.File("E:\\NetBeansProjects\\YoutubeUploader\\src\\main\\resources\\client_secrets.json")));
+        Reader clientSecretReader = new InputStreamReader(new FileInputStream(new java.io.File("D:\\NetBeansProjects\\YoutubeUploader\\src\\main\\resources\\client_secrets.json")));
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, clientSecretReader);
 
         // Build flow and trigger user authorization request.
@@ -116,39 +117,37 @@ public class DriveUpload {
                 .build();
     }
 
-    public static void main(String[] args) throws IOException, Exception {
+    public void upload(List<Band> bands) throws IOException, Exception {
         // Build a new authorized API client service.
         Drive service = getDriveService();
-        
+
         // Folder TEST on smegibrn@gmail drive
         String folderId = "0B6zT2QOu7WjjTW56aEp4YzRxa2M";
-        
-        // Setting metadate for file
-        File metaData = new File();
-        metaData.setName("Test MP3 upload");
-        metaData.setParents(Collections.singletonList(folderId));
-        
-        // Loading file
-        java.io.File filePath = new java.io.File("e:\\Projects\\YoutubeUploader\\Breaking Benjamin\\Breaking Benjamin - Fade Away.mp3");
-        FileContent content = new FileContent("audio/mp3", filePath);
-        
-        // Creating upload file
-        File fileTest = service.files().create(metaData, content)
-                .setFields("id, parents")
-                .execute();
-        
-        // Print the names and IDs for up to 10 files.
-        FileList result = service.files().list()
-                .setFields("nextPageToken, files(id, name, mimeType)")
-                .execute();
-        List<File> files = result.getFiles();
 
-        if (files == null || files.size() == 0) {
-            System.out.println("No files found.");
-        } else {
-            System.out.println("Files:");
-            for (com.google.api.services.drive.model.File file : files) {
-                System.out.printf("%s (%s) [%s]\n", file.getName(), file.getId(), file.getMimeType());
+        // Loop through bands provided
+        for (Band band : bands) {
+            for (Song song : band.getSongs()) {
+                // Creating download link
+                String downloadLink;
+                
+                // Setting metadate for file
+                File metaData = new File();
+                metaData.setName(song.getName());
+                metaData.setParents(Collections.singletonList(folderId));
+
+                // Loading file
+                java.io.File filePath = new java.io.File(song.getPath());
+                FileContent content = new FileContent("audio/mp3", filePath);
+
+                // Creating upload file
+                File fileTest = service.files()
+                        .create(metaData, content)
+                        .setFields("id, parents")
+                        .execute();
+                
+                downloadLink = "https://drive.google.com/file/d/" + fileTest.getId();
+                song.setDownloadLink(downloadLink);
+                
             }
         }
     }

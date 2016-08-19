@@ -5,7 +5,6 @@ import com.smegi.youtubeuploader.Model.Song;
 import com.smegi.youtubeuploader.Model.MusicVideo;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -52,8 +51,12 @@ public class VideoGenerator {
                     };
                     outputDrainer.start();
                     p.waitFor();
+                    
+                    // Create music video with (HD SOUND) at end of name
+                    // Put it in bands list for later use
                     MusicVideo video = new MusicVideo();
-                    video.setName(song.getName());
+                    String videoName = song.getName().substring(0, song.getName().length()-4) + " (HD SOUND)";
+                    video.setName(videoName);
                     video.setPath(outPath);
                     band.addMusicVideo(video);
                 }

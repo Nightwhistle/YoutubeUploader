@@ -7,6 +7,19 @@ package com.smegi.youtubeuploader.Model;
 public class Song {
     private String name;
     private String path;
+    private String downloadLink;
+    
+    public String getAdflyLink() {
+        return "http://adf.ly/1640822/" + downloadLink;
+    }
+    
+    public String getDownloadLink() {
+        return downloadLink;
+    }
+
+    public void setDownloadLink(String downloadLink) {
+        this.downloadLink = downloadLink;
+    }
 
     public String getName() {
         return name;
