@@ -63,22 +63,23 @@ public class UploadVideo {
      *
      * @param bands
      */
-    public void upload(List<Band> bands) {
+    public void upload(List<Band> bands) throws Exception {
         this.bands = bands;
         // This OAuth 2.0 access scope allows an application to upload files
         // to the authenticated user's YouTube channel, but doesn't allow
         // other types of access.
         List<String> scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube.upload");
 
+        // Authorize the request.
+        Credential credential = Auth.authorize(scopes, "uploadvideo");
+
+        // This object is used to make YouTube Data API requests.
+        youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, credential).setApplicationName(
+                "youtube-cmdline-uploadvideo-sample").build();
+
         for (Band band : bands) {
             for (MusicVideo musicVideo : band.getMusicVideos()) {
                 try {
-                    // Authorize the request.
-                    Credential credential = Auth.authorize(scopes, "uploadvideo");
-
-                    // This object is used to make YouTube Data API requests.
-                    youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, credential).setApplicationName(
-                            "youtube-cmdline-uploadvideo-sample").build();
 
                     System.out.println("Uploading: " + musicVideo.getName());
 
@@ -149,7 +150,7 @@ public class UploadVideo {
                                     break;
                                 case MEDIA_IN_PROGRESS:
                                     System.out.println("Upload in progress");
-                                    System.out.println("Upload percentage: " + uploader.getProgress());
+                                    System.out.println("Upload percentage: " + uploader.getNumBytesUploaded());
                                     break;
                                 case MEDIA_COMPLETE:
                                     System.out.println("Upload Completed!");

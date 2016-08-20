@@ -138,8 +138,9 @@ public class DriveUpload {
                 // Loading file
                 java.io.File filePath = new java.io.File(song.getPath());
                 FileContent content = new FileContent("audio/mp3", filePath);
-
-                // Creating upload file
+                
+                // Uploading file
+                System.out.printf("Uploading %s %.2fmb %n", song.getName(), filePath.length()/1000000D);
                 File fileTest = service.files()
                         .create(metaData, content)
                         .setFields("id, parents")
@@ -147,7 +148,7 @@ public class DriveUpload {
                 
                 downloadLink = "https://drive.google.com/file/d/" + fileTest.getId();
                 song.setDownloadLink(downloadLink);
-                
+                System.out.println("Upload finished");
             }
         }
     }
