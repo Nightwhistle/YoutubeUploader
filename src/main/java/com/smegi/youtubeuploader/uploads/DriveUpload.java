@@ -19,6 +19,7 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import com.smegi.youtubeuploader.Model.Band;
 import com.smegi.youtubeuploader.Model.Song;
+import com.smegi.youtubeuploader.MyPaths;
 import java.io.FileInputStream;
 
 import java.io.IOException;
@@ -86,7 +87,7 @@ public class DriveUpload {
     public static Credential authorize() throws IOException, Exception {
 
         // Load client secrets.
-        Reader clientSecretReader = new InputStreamReader(new FileInputStream(new java.io.File("D:\\NetBeansProjects\\YoutubeUploader\\src\\main\\resources\\client_secrets.json")));
+        Reader clientSecretReader = new InputStreamReader(new FileInputStream(new java.io.File(MyPaths.CLIENT_SECRETS_PATH)));
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, clientSecretReader);
 
         // Build flow and trigger user authorization request.

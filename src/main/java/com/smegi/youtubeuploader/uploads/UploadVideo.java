@@ -25,12 +25,13 @@ import com.google.api.services.youtube.model.VideoStatus;
 import com.google.common.collect.Lists;
 import com.smegi.youtubeuploader.Model.Band;
 import com.smegi.youtubeuploader.Model.MusicVideo;
+import com.smegi.youtubeuploader.Model.Song;
 import java.io.FileInputStream;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import org.apache.commons.collections.ListUtils;
 
 /**
  * Upload a video to the authenticated user's channel. Use OAuth 2.0 to
@@ -78,9 +79,9 @@ public class UploadVideo {
                 "youtube-cmdline-uploadvideo-sample").build();
 
         for (Band band : bands) {
-            for (MusicVideo musicVideo : band.getMusicVideos()) {
+            for (Song song : band.getSongs()) {
                 try {
-
+                    MusicVideo musicVideo = song.getMusicVideo();
                     System.out.println("Uploading: " + musicVideo.getName());
 
                     // Add extra information to the video before uploading.
@@ -102,15 +103,10 @@ public class UploadVideo {
                     Calendar cal = Calendar.getInstance();
                     snippet.setTitle(musicVideo.getName());
                     snippet.setDescription(
-                            "Video uploaded via YouTube Data API V3 using the Java library " + "on " + cal.getTime());
+                            "Bitrate: 240 <br /> Download link: " + song.getAdflyLink() + "");
 
                     // Set the keyword tags that you want to associate with the video.
-                    List<String> tags = new ArrayList<String>();
-                    tags.add("test");
-                    tags.add("example");
-                    tags.add("java");
-                    tags.add("YouTube Data API V3");
-                    tags.add("erase me");
+                    List<String> tags = ListUtils.union(band.getTags(), song.getTags());
                     snippet.setTags(tags);
 
                     // Add the completed snippet object to the video resource.

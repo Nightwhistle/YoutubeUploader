@@ -1,27 +1,26 @@
 package com.smegi.youtubeuploader.Model;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Sergej
  */
 public class Band {
+
     private String name;
     private List<Song> songs = new ArrayList<>();
-    private List<MusicVideo> videos = new ArrayList<>();
+    private List<String> tags = new ArrayList<>();
     private String background;
     private String path;
 
-    public List<MusicVideo> getMusicVideos() {
-        return videos;
-    }
-
-    public void setMusicVideos(List<MusicVideo> videos) {
-        this.videos = videos;
-    }
-    
     public String getPath() {
         return path;
     }
@@ -45,15 +44,11 @@ public class Band {
     public void setSongs(List<Song> songs) {
         this.songs = songs;
     }
-    
+
     public void addSong(Song song) {
         songs.add(song);
     }
-    
-    public void addMusicVideo(MusicVideo video) {
-        videos.add(video);
-    }
-    
+
     public String getBackground() {
         return background;
     }
@@ -62,6 +57,19 @@ public class Band {
         this.background = background;
     }
 
-    
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(File tagFile) {
+        try {
+            for (String tag : Files.readAllLines(Paths.get(tagFile.getAbsolutePath()))) {
+                tags.add(tag);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(Band.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        tags.add(name);
+    }
 
 }

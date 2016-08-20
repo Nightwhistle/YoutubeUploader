@@ -58,7 +58,7 @@ public class VideoGenerator {
                     String videoName = song.getName().substring(0, song.getName().length()-4) + " (HD SOUND)";
                     video.setName(videoName);
                     video.setPath(outPath);
-                    band.addMusicVideo(video);
+                    song.setMusicVideo(video);
                 }
             }
         } catch (Exception e) {

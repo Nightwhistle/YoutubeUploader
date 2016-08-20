@@ -12,6 +12,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.DataStore;
 import com.google.api.client.util.store.FileDataStoreFactory;
+import com.smegi.youtubeuploader.MyPaths;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,7 +54,7 @@ public class Auth {
     public static Credential authorize(List<String> scopes, String credentialDatastore) throws IOException, Exception {
 
         // Load client secrets.  
-        Reader clientSecretReader = new InputStreamReader(new FileInputStream (new File("D:\\NetBeansProjects\\YoutubeUploader\\src\\main\\resources\\client_secrets.json")));
+        Reader clientSecretReader = new InputStreamReader(new FileInputStream (new File(MyPaths.CLIENT_SECRETS_PATH)));
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, clientSecretReader);
 
         // Checks that the defaults have been replaced (Default = "Enter X here").

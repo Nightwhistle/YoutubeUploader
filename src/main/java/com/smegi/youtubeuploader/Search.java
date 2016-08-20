@@ -11,7 +11,7 @@ import java.util.List;
  * @author Sergej
  */
 public class Search {
-    
+
     // Returns ArrayList of all bands in folder
     public List<Band> getBands(String directoryName) {
         File directory = new File(directoryName);
@@ -31,11 +31,19 @@ public class Search {
                         continue;
                     }
                     
+                    if (isText(songFile)) {
+                        band.setTags(songFile);
+                        continue;
+                    }
+
                     if (isMusicFile(songFile)) {
-                    Song song = new Song();
-                    song.setName(songFile.getName());
-                    song.setPath(songFile.getAbsolutePath());
-                    band.addSong(song);
+                        TagsGenerator tg = new TagsGenerator();
+                        Song song = new Song();
+                        song.setName(songFile.getName());
+                        song.setPath(songFile.getAbsolutePath());
+                        song.setTags(tg.generate(songFile.getName()));
+                        
+                        band.addSong(song);
                     }
                 }
                 bands.add(band);
@@ -43,15 +51,19 @@ public class Search {
         }
         return bands;
     }
-    
-    
+
     // Returns true of file is image (jpg only so far, open for addition in return line)
     private boolean isImage(File file) {
         String extension = file.getName().substring(file.getName().length() - 3);
-        return extension.equalsIgnoreCase("jpg") ||
-               extension.equalsIgnoreCase("png");
+        return extension.equalsIgnoreCase("jpg")
+            || extension.equalsIgnoreCase("png");
     }
-    
+
+    private boolean isText(File file) {
+        String extension = file.getName().substring(file.getName().length() - 3);
+        return extension.equalsIgnoreCase("txt");
+    }
+
     private boolean isMusicFile(File file) {
         String extension = file.getName().substring(file.getName().length() - 3);
         return extension.equalsIgnoreCase("mp3");
