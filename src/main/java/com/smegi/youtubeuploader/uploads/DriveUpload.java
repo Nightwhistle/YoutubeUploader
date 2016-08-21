@@ -20,6 +20,7 @@ import com.google.api.services.drive.model.FileList;
 import com.smegi.youtubeuploader.Model.Band;
 import com.smegi.youtubeuploader.Model.Song;
 import com.smegi.youtubeuploader.MyPaths;
+import com.smegi.youtubeuploader.Search;
 import java.io.FileInputStream;
 
 import java.io.IOException;
@@ -31,6 +32,9 @@ import java.util.List;
 
 public class DriveUpload {
 
+    private int numberOfSongs = Search.numberOfSongs;
+    private int songsUploaded = 0;
+    
     /**
      * Application name.
      */
@@ -141,7 +145,7 @@ public class DriveUpload {
                 FileContent content = new FileContent("audio/mp3", filePath);
                 
                 // Uploading file
-                System.out.printf("Uploading %s %.2fmb %n", song.getName(), filePath.length()/1000000D);
+                System.out.printf("Uploading %s %.2fmb [%d/%d]%n", song.getName(), filePath.length()/1000000D, ++songsUploaded, numberOfSongs);
                 File fileTest = service.files()
                         .create(metaData, content)
                         .setFields("id, parents")

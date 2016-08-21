@@ -11,6 +11,8 @@ import java.util.List;
  * @author Sergej
  */
 public class Search {
+    
+    public static int numberOfSongs = 0;
 
     // Returns ArrayList of all bands in folder
     public List<Band> getBands(String directoryName) {
@@ -44,6 +46,7 @@ public class Search {
                         song.setTags(tg.generate(songFile.getName()));
                         
                         band.addSong(song);
+                        numberOfSongs++;
                     }
                 }
                 bands.add(band);
