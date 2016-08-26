@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,11 +24,11 @@ public class TagsGenerator {
         List<String> tags = new ArrayList<>();
 
         // add song name to tags list
-        tags.add(songName);
+        songName = songName.replace(".mp3", "");
+        songName = songName.replace("- ", "");
         
-        if (songName.toLowerCase().contains("live")) {
-            tags.add("live");
-        }
+        String[] songNameArray = songName.split(" ");
+        tags.addAll(Arrays.asList(songNameArray));
 
         // add predefined tags list from file
         try {

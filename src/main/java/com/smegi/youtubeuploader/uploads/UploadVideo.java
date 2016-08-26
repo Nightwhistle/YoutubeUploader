@@ -113,7 +113,7 @@ public class UploadVideo {
                     videoObjectDefiningMetadata.setSnippet(snippet);
 
                     InputStreamContent mediaContent = new InputStreamContent(VIDEO_FILE_FORMAT, new FileInputStream(musicVideo.getPath()));
-
+                    
                     // Insert the video. The command sends three arguments. The first
                     // specifies which information the API request is setting and which
                     // information the API response should return. The second argument
@@ -124,7 +124,7 @@ public class UploadVideo {
 
                     // Set the upload type and add an event listener.
                     MediaHttpUploader uploader = videoInsert.getMediaHttpUploader();
-
+                    
                     // Indicate whether direct media upload is enabled. A value of
                     // "True" indicates that direct media upload is enabled and that
                     // the entire media content will be uploaded in a single request.
@@ -134,6 +134,7 @@ public class UploadVideo {
                     // network interruption or other transmission failure, saving
                     // time and bandwidth in the event of network failures.
                     uploader.setDirectUploadEnabled(false);
+                    uploader.setChunkSize(MediaHttpUploader.MINIMUM_CHUNK_SIZE);
 
                     MediaHttpUploaderProgressListener progressListener = new MediaHttpUploaderProgressListener() {
                         public void progressChanged(MediaHttpUploader uploader) throws IOException {
@@ -146,7 +147,7 @@ public class UploadVideo {
                                     break;
                                 case MEDIA_IN_PROGRESS:
                                     System.out.println("Upload in progress");
-                                    System.out.println("Upload percentage: " + uploader.getNumBytesUploaded());
+                                    System.out.println("Upload percentage: " + uploader.getNumBytesUploaded() / mediaContent.getLength());
                                     break;
                                 case MEDIA_COMPLETE:
                                     System.out.println("Upload Completed!");

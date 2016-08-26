@@ -25,8 +25,8 @@ public class YoutubeUploader {
         VideoGenerator vg = new VideoGenerator(bands);
         vg.Generate();
 
-        DriveUpload du = new DriveUpload();
-        du.upload(bands);
+//        DriveUpload du = new DriveUpload();
+//        du.upload(bands);
 
         UploadVideo uv = new UploadVideo();
         uv.upload(bands);
