@@ -20,6 +20,7 @@ public class Band {
     private List<String> tags = new ArrayList<>();
     private String background;
     private String path;
+    private String folderId;
 
     public String getPath() {
         return path;
@@ -70,6 +71,14 @@ public class Band {
             Logger.getLogger(Band.class.getName()).log(Level.SEVERE, null, ex);
         }
         tags.add(name);
+    }
+
+    public void setFolderId(String id) {
+        folderId = id;
+    }
+
+    public String getFolderId() {
+        return folderId;
     }
 
 }

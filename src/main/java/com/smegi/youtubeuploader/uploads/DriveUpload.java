@@ -16,12 +16,13 @@ import com.google.api.services.drive.DriveScopes;
 
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
-import com.google.api.services.drive.model.FileList;
 import com.smegi.youtubeuploader.Model.Band;
+import com.smegi.youtubeuploader.Model.Folder;
 import com.smegi.youtubeuploader.Model.Song;
 import com.smegi.youtubeuploader.MyPaths;
 import com.smegi.youtubeuploader.Search;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,12 +30,14 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DriveUpload {
 
     private int numberOfSongs = Search.numberOfSongs;
     private int songsUploaded = 0;
-    
+
     /**
      * Application name.
      */
@@ -122,35 +125,75 @@ public class DriveUpload {
                 .build();
     }
 
+    // create new folder on Google Drive if its not already created (not in folders.txt)
+    private void createFolder(Band band) {
+        if (!folderExists(band.getName())) {
+            try {
+                Drive service = getDriveService();
+                File fileMetadata = new File();
+                fileMetadata.setName(band.getName());
+                fileMetadata.setMimeType("application/vnd.google-apps.folder");
+
+                File file = service.files().create(fileMetadata)
+                        .setFields("id")
+                        .execute();
+                band.setFolderId(file.getId());
+                
+                // Write newly created folder to folders.txt
+                String filePath = MyPaths.RESOURCES_PATH + "/folders.txt";
+                FileWriter fw = new FileWriter(filePath, true);
+                fw.write(band.getName() + "," + band.getFolderId() + "\r\n");
+                fw.close();
+            } catch (Exception ex) {
+                Logger.getLogger(DriveUpload.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    // check if folder named as band already exists on Google Drive (in folders.txt)
+    private boolean folderExists(String name) {
+        Search s = new Search();
+        for (Folder f : s.getFolders()) {
+            if (name.equals(f.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void upload(List<Band> bands) throws IOException, Exception {
         // Build a new authorized API client service.
         Drive service = getDriveService();
 
-        // Folder TEST on smegibrn@gmail drive
-        String folderId = "0B6zT2QOu7WjjTW56aEp4YzRxa2M";
+        // Get list of all folders that already exist
+        Search s = new Search();
+        List<Folder> folders = s.getFolders();
 
         // Loop through bands provided
         for (Band band : bands) {
+
+            createFolder(band);
+
             for (Song song : band.getSongs()) {
                 // Creating download link
                 String downloadLink;
-                
+
                 // Setting metadate for file
                 File metaData = new File();
                 metaData.setName(song.getName());
-                metaData.setParents(Collections.singletonList(folderId));
+                metaData.setParents(Collections.singletonList(band.getFolderId()));
 
                 // Loading file
                 java.io.File filePath = new java.io.File(song.getPath());
                 FileContent content = new FileContent("audio/mp3", filePath);
-                
+
                 // Uploading file
-                System.out.printf("Uploading %s %.2fmb [%d/%d]%n", song.getName(), filePath.length()/1000000D, ++songsUploaded, numberOfSongs);
+                System.out.printf("Uploading %s %.2fmb [%d/%d]%n", song.getName(), filePath.length() / 1000000D, ++songsUploaded, numberOfSongs);
                 File fileTest = service.files()
                         .create(metaData, content)
                         .setFields("id, parents")
                         .execute();
-                
+
                 downloadLink = "https://drive.google.com/file/d/" + fileTest.getId();
                 song.setDownloadLink(downloadLink);
                 System.out.println("Upload finished");
