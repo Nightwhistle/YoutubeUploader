@@ -9,6 +9,7 @@ import com.smegi.youtubeuploader.Model.Band;
 import com.smegi.youtubeuploader.Model.Folder;
 import com.smegi.youtubeuploader.Model.Song;
 import com.smegi.youtubeuploader.uploads.DriveUpload;
+import com.smegi.youtubeuploader.uploads.UploadVideo;
 import java.util.List;
 
 /**
@@ -29,8 +30,8 @@ public class YoutubeUploader {
         DriveUpload du = new DriveUpload();
         du.upload(bands);
 
-//        UploadVideo uv = new UploadVideo();
-//        uv.upload(bands);
+        UploadVideo uv = new UploadVideo();
+        uv.upload(bands);
 
         System.out.println("--------------------------------");
         System.out.println("---------FINAL CONSOLE----------");
