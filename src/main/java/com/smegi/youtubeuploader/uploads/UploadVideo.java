@@ -26,6 +26,7 @@ import com.google.common.collect.Lists;
 import com.smegi.youtubeuploader.Model.Band;
 import com.smegi.youtubeuploader.Model.MusicVideo;
 import com.smegi.youtubeuploader.Model.Song;
+import com.smegi.youtubeuploader.Search;
 import java.io.FileInputStream;
 
 import java.io.IOException;
@@ -41,6 +42,9 @@ import org.apache.commons.collections.ListUtils;
  * @author Jeremy Walker
  */
 public class UploadVideo {
+    
+    private int videosUploaded = 0;
+    private int numberOfVideos = Search.numberOfSongs;
 
     /**
      * Define a global instance of a Youtube object, which will be used to make
@@ -82,7 +86,7 @@ public class UploadVideo {
             for (Song song : band.getSongs()) {
                 try {
                     MusicVideo musicVideo = song.getMusicVideo();
-                    System.out.println("Uploading: " + musicVideo.getName());
+                    System.out.printf("[%d/%d] Uploading: %s%n", ++videosUploaded, numberOfVideos, musicVideo.getName());
 
                     // Add extra information to the video before uploading.
                     Video videoObjectDefiningMetadata = new Video();
@@ -103,7 +107,7 @@ public class UploadVideo {
                     Calendar cal = Calendar.getInstance();
                     snippet.setTitle(musicVideo.getName());
                     snippet.setDescription(
-                            "Download link: " + song.getAdflyLink());
+                            "Download link: " + song.getTinyUrl());
 
                     // Set the keyword tags that you want to associate with the video.
                     List<String> tags = ListUtils.union(band.getTags(), song.getTags());
@@ -111,7 +115,6 @@ public class UploadVideo {
 
                     // Add the completed snippet object to the video resource.
                     videoObjectDefiningMetadata.setSnippet(snippet);
-
                     InputStreamContent mediaContent = new InputStreamContent(VIDEO_FILE_FORMAT, new FileInputStream(musicVideo.getPath()));
                     
                     // Insert the video. The command sends three arguments. The first
@@ -135,19 +138,18 @@ public class UploadVideo {
                     // time and bandwidth in the event of network failures.
                     uploader.setDirectUploadEnabled(false);
                     uploader.setChunkSize(MediaHttpUploader.MINIMUM_CHUNK_SIZE);
-
                     MediaHttpUploaderProgressListener progressListener = new MediaHttpUploaderProgressListener() {
                         public void progressChanged(MediaHttpUploader uploader) throws IOException {
                             switch (uploader.getUploadState()) {
                                 case INITIATION_STARTED:
-                                    System.out.println("Initiation Started");
+                                 //   System.out.println("Initiation Started");
                                     break;
                                 case INITIATION_COMPLETE:
-                                    System.out.println("Initiation Completed");
+                                 //   System.out.println("Initiation Completed");
                                     break;
                                 case MEDIA_IN_PROGRESS:
-                                    System.out.println("Upload in progress");
-                                    System.out.println("Upload percentage: " + uploader.getNumBytesUploaded() / mediaContent.getLength());
+                                    double progress = (double)uploader.getNumBytesUploaded() / musicVideo.getSize() * 100;
+                                    System.out.printf("Upload percentage: %.2f%% \r", progress);
                                     break;
                                 case MEDIA_COMPLETE:
                                     System.out.println("Upload Completed!");

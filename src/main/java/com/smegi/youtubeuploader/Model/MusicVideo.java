@@ -7,6 +7,7 @@ package com.smegi.youtubeuploader.Model;
 public class MusicVideo {
     private String name;
     private String path;
+    private long size;
 
     public String getName() {
         return name;
@@ -23,4 +24,13 @@ public class MusicVideo {
     public void setPath(String path) {
         this.path = path;
     }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+    
 }

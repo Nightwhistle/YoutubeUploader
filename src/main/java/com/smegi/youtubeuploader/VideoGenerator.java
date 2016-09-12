@@ -58,6 +58,12 @@ public class VideoGenerator {
                     String videoName = song.getName().substring(0, song.getName().length()-4) + " (HD SOUND)";
                     video.setName(videoName);
                     video.setPath(outPath);
+                    
+                    // getting video size
+                    java.io.File f = new java.io.File(outPath);
+                    video.setSize(f.length());
+                    
+                    // setting video in Music object
                     song.setMusicVideo(video);
                 }
             }
