@@ -21,6 +21,7 @@ public class Search {
     
     public static int numberOfSongs = 0;
     
+    // returns list of all folder names with their Drive IDs
     public List<Folder> getFolders() {
         List<Folder> folders = new ArrayList<>();
         

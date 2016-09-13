@@ -7,9 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -73,28 +71,24 @@ public class Song {
         this.musicVideo = musicVideo;
     }
 
+    // Getting url shriked from gr.de using HTTP requests
     public String getTinyUrl() throws IOException {
         String urlPath = "http://qr.de/api/short?longurl=" + getAdflyLink();
         System.out.println("Api path: " + urlPath);
-        String jsonResponse = "";
+        StringBuilder jsonResponse = new StringBuilder();
         String response = "";
         try {
             URL url = new URL(urlPath);
             BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
             String line;
             while ((line = br.readLine()) != null) {
-                jsonResponse = line + line;
+                jsonResponse.append(line);
                 System.out.println("Response: " + line);
             }
 
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(jsonResponse);
-            Iterator<Map.Entry<String, JsonNode>> fieldsIterator = root.fields();
-            while (fieldsIterator.hasNext()) {
-
-                Map.Entry<String, JsonNode> field = fieldsIterator.next();
-                System.out.println("Key: " + field.getKey() + "\tValue:" + field.getValue());
-            }
+            JsonNode root = mapper.readTree(jsonResponse.toString());
+            response = root.path("url").toString();
 
         } catch (MalformedURLException ex) {
             Logger.getLogger(Song.class.getName()).log(Level.SEVERE, null, ex);
