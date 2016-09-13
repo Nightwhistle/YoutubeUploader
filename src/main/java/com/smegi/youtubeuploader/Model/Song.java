@@ -74,7 +74,6 @@ public class Song {
     // Getting url shriked from gr.de using HTTP requests
     public String getTinyUrl() throws IOException {
         String urlPath = "http://qr.de/api/short?longurl=" + getAdflyLink();
-        System.out.println("Api path: " + urlPath);
         StringBuilder jsonResponse = new StringBuilder();
         String response = "";
         try {
@@ -83,7 +82,6 @@ public class Song {
             String line;
             while ((line = br.readLine()) != null) {
                 jsonResponse.append(line);
-                System.out.println("Response: " + line);
             }
 
             ObjectMapper mapper = new ObjectMapper();
@@ -96,7 +94,6 @@ public class Song {
             Logger.getLogger(Song.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        System.out.println("Returning: " + response);
         return response;
     }
 }

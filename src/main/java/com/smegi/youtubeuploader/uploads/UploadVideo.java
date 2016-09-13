@@ -26,8 +26,10 @@ import com.google.common.collect.Lists;
 import com.smegi.youtubeuploader.Model.Band;
 import com.smegi.youtubeuploader.Model.MusicVideo;
 import com.smegi.youtubeuploader.Model.Song;
+import com.smegi.youtubeuploader.MyPaths;
 import com.smegi.youtubeuploader.Search;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -42,7 +44,7 @@ import org.apache.commons.collections.ListUtils;
  * @author Jeremy Walker
  */
 public class UploadVideo {
-    
+
     private int videosUploaded = 0;
     private int numberOfVideos = Search.numberOfSongs;
 
@@ -116,7 +118,7 @@ public class UploadVideo {
                     // Add the completed snippet object to the video resource.
                     videoObjectDefiningMetadata.setSnippet(snippet);
                     InputStreamContent mediaContent = new InputStreamContent(VIDEO_FILE_FORMAT, new FileInputStream(musicVideo.getPath()));
-                    
+
                     // Insert the video. The command sends three arguments. The first
                     // specifies which information the API request is setting and which
                     // information the API response should return. The second argument
@@ -127,7 +129,7 @@ public class UploadVideo {
 
                     // Set the upload type and add an event listener.
                     MediaHttpUploader uploader = videoInsert.getMediaHttpUploader();
-                    
+
                     // Indicate whether direct media upload is enabled. A value of
                     // "True" indicates that direct media upload is enabled and that
                     // the entire media content will be uploaded in a single request.
@@ -142,13 +144,13 @@ public class UploadVideo {
                         public void progressChanged(MediaHttpUploader uploader) throws IOException {
                             switch (uploader.getUploadState()) {
                                 case INITIATION_STARTED:
-                                 //   System.out.println("Initiation Started");
+                                    //   System.out.println("Initiation Started");
                                     break;
                                 case INITIATION_COMPLETE:
-                                 //   System.out.println("Initiation Completed");
+                                    //   System.out.println("Initiation Completed");
                                     break;
                                 case MEDIA_IN_PROGRESS:
-                                    double progress = (double)uploader.getNumBytesUploaded() / musicVideo.getSize() * 100;
+                                    double progress = (double) uploader.getNumBytesUploaded() / musicVideo.getSize() * 100;
                                     System.out.printf("Upload percentage: %.2f%% \r", progress);
                                     break;
                                 case MEDIA_COMPLETE:
@@ -166,12 +168,17 @@ public class UploadVideo {
                     Video returnedVideo = videoInsert.execute();
 
                     // Print data about the newly inserted video from the API response.
-                    System.out.println("\n================== Returned Video ==================\n");
-                    System.out.println("  - Id: " + returnedVideo.getId());
-                    System.out.println("  - Title: " + returnedVideo.getSnippet().getTitle());
-                    System.out.println("  - Tags: " + returnedVideo.getSnippet().getTags());
-                    System.out.println("  - Privacy Status: " + returnedVideo.getStatus().getPrivacyStatus());
-                    System.out.println("  - Video Count: " + returnedVideo.getStatistics().getViewCount());
+//                    System.out.println("\n================== Returned Video ==================\n");
+//                    System.out.println("  - Id: " + returnedVideo.getId());
+//                    System.out.println("  - Title: " + returnedVideo.getSnippet().getTitle());
+//                    System.out.println("  - Tags: " + returnedVideo.getSnippet().getTags());
+//                    System.out.println("  - Privacy Status: " + returnedVideo.getStatus().getPrivacyStatus());
+//                    System.out.println("  - Video Count: " + returnedVideo.getStatistics().getViewCount());
+                    System.out.println("Uploaded successfully");
+                    String filePath = MyPaths.RESOURCES_PATH + "/uploadedSongs.txt";
+                    FileWriter fw = new FileWriter(filePath, true);
+                    fw.write(returnedVideo.getSnippet().getTitle() + "," + returnedVideo.getId() + "\r\n");
+                    fw.close();
 
                 } catch (GoogleJsonResponseException e) {
                     System.err.println("GoogleJsonResponseException code: " + e.getDetails().getCode() + " : "
