@@ -88,7 +88,7 @@ public class Song {
 
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(jsonResponse.toString());
-            response = root.path("url").toString();
+            response = root.path("url").toString().replaceAll("\"", "");
 
         } catch (MalformedURLException ex) {
             Logger.getLogger(Song.class.getName()).log(Level.SEVERE, null, ex);
