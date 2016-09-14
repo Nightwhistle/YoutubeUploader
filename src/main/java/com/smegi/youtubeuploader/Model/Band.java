@@ -65,6 +65,8 @@ public class Band {
     public void setTags(File tagFile) {
         try {
             for (String tag : Files.readAllLines(Paths.get(tagFile.getAbsolutePath()))) {
+                tag = tag.replaceAll("[^A-Za-z0-9 ]", "");
+                if (tag.length() < 2) continue;
                 tags.add(tag);
             }
         } catch (IOException ex) {
