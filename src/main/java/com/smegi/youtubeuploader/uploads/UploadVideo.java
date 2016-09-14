@@ -109,7 +109,7 @@ public class UploadVideo {
                     Calendar cal = Calendar.getInstance();
                     snippet.setTitle(musicVideo.getName());
                     snippet.setDescription(
-                            "Download link: " + song.getTinyUrl());
+                            "Download link: " + song.getShortUrl());
 
                     // Set the keyword tags that you want to associate with the video.
                     List<String> tags = ListUtils.union(band.getTags(), song.getTags());

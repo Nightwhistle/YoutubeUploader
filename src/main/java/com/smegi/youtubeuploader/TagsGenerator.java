@@ -26,6 +26,9 @@ public class TagsGenerator {
         // add song name to tags list
         songName = songName.replace(".mp3", "");
         songName = songName.replace("- ", "");
+        songName = songName.replaceAll("'", "");
+        songName = songName.replaceAll("\"", "").replaceAll("[()]", "");
+        
         
         String[] songNameArray = songName.split(" ");
         tags.addAll(Arrays.asList(songNameArray));
@@ -39,7 +42,7 @@ public class TagsGenerator {
         } catch (IOException ex) {
             Logger.getLogger(TagsGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return tags;
     }
 

@@ -1,15 +1,9 @@
 package com.smegi.youtubeuploader.Model;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -71,29 +65,24 @@ public class Song {
         this.musicVideo = musicVideo;
     }
 
-    // Getting url shriked from gr.de using HTTP requests
-    public String getTinyUrl() throws IOException {
-        String urlPath = "http://qr.de/api/short?longurl=" + getAdflyLink();
-        StringBuilder jsonResponse = new StringBuilder();
-        String response = "";
+    public String getShortUrl() {
+        String key = "37590ad3bd54f2643183c9d45a061a08";
+        String uid = "1640822";
+        String advert_type = "int";
+        String domain = "q.gs";
+        String url = downloadLink;
+
+        String response = null;
+
         try {
-            URL url = new URL(urlPath);
-            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-            String line;
-            while ((line = br.readLine()) != null) {
-                jsonResponse.append(line);
-            }
-
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(jsonResponse.toString());
-            response = root.path("url").toString().replaceAll("\"", "");
-
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(Song.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Song.class.getName()).log(Level.SEVERE, null, ex);
+            URL req = new URL("http://api.adf.ly/api.php?key=" + key + "&uid=" + uid + "&advert_type=" + advert_type + "&domain=" + domain + "&url=" + url);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(req.openStream()));
+            response = reader.readLine();
+            reader.close();
+            return response;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return "Error: " + ex.getClass().getSimpleName() + ": " + ex.getMessage();
         }
-
-        return response;
     }
 }
