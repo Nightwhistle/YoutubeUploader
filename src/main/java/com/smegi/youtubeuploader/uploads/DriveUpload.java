@@ -27,6 +27,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -138,7 +140,7 @@ public class DriveUpload {
                         .setFields("id")
                         .execute();
                 band.setFolderId(file.getId());
-                
+
                 // Write newly created folder to folders.txt
                 String filePath = MyPaths.RESOURCES_PATH + "/folders.txt";
                 FileWriter fw = new FileWriter(filePath, true);
@@ -162,6 +164,9 @@ public class DriveUpload {
     }
 
     public void upload(List<Band> bands) throws IOException, Exception {
+
+        UploadVideo uv = new UploadVideo();
+
         // Build a new authorized API client service.
         Drive service = getDriveService();
 
@@ -188,7 +193,7 @@ public class DriveUpload {
                 FileContent content = new FileContent("audio/mp3", filePath);
 
                 // Uploading file
-                System.out.printf("Uploading %s %.2fmb [%d/%d]%n", song.getName(), filePath.length() / 1000000D, ++songsUploaded, numberOfSongs);
+                System.out.printf("[%d/%d] Uploading: %s %.2fmb %n", ++songsUploaded, numberOfSongs, song.getName(), filePath.length() / 1000000D);
                 File fileTest = service.files()
                         .create(metaData, content)
                         .setFields("id, parents")
@@ -196,7 +201,16 @@ public class DriveUpload {
 
                 downloadLink = "https://drive.google.com/file/d/" + fileTest.getId();
                 song.setDownloadLink(downloadLink);
-                System.out.println("Upload finished");
+                System.out.println("    Drive upload completed");
+                try {
+                    Thread.sleep(2000);                 //2 seconds
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+                uv.upload(song);
+
+                Files.delete(Paths.get(song.getPath()));
+
             }
         }
     }

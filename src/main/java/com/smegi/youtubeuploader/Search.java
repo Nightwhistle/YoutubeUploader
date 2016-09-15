@@ -78,7 +78,7 @@ public class Search {
                         Song song = new Song();
                         song.setName(songFile.getName());
                         song.setPath(songFile.getAbsolutePath());
-                        song.setTags(tg.generate(songFile.getName()));
+                        song.setTags(tg.generate(songFile));
                         
                         band.addSong(song);
                         numberOfSongs++;

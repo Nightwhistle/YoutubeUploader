@@ -32,8 +32,12 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Calendar;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.collections.ListUtils;
 
 /**
@@ -62,6 +66,19 @@ public class UploadVideo {
 
     private static final String SAMPLE_VIDEO_FILENAME = "sample-video.mp4";
     private List<Band> bands;
+    private List<String> scopes;
+    private Credential credential;
+
+    public UploadVideo() {
+        try {
+            List<String> scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube.upload");
+            Credential credential = Auth.authorize(scopes, "uploadvideo");
+            youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, credential).setApplicationName(
+                    "youtube-cmdline-uploadvideo-sample").build();
+        } catch (Exception ex) {
+            Logger.getLogger(UploadVideo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     /**
      * Upload the user-selected video to the user's YouTube channel. The code
@@ -70,128 +87,119 @@ public class UploadVideo {
      *
      * @param bands
      */
-    public void upload(List<Band> bands) throws Exception {
+    public void upload(Song song) throws Exception {
         this.bands = bands;
         // This OAuth 2.0 access scope allows an application to upload files
         // to the authenticated user's YouTube channel, but doesn't allow
         // other types of access.
-        List<String> scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube.upload");
 
         // Authorize the request.
-        Credential credential = Auth.authorize(scopes, "uploadvideo");
-
         // This object is used to make YouTube Data API requests.
-        youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, credential).setApplicationName(
-                "youtube-cmdline-uploadvideo-sample").build();
+        try {
+            MusicVideo musicVideo = song.getMusicVideo();
+            System.out.printf("[%d/%d] Uploading: %s%n", ++videosUploaded, numberOfVideos, musicVideo.getName());
 
-        for (Band band : bands) {
-            for (Song song : band.getSongs()) {
-                try {
-                    MusicVideo musicVideo = song.getMusicVideo();
-                    System.out.printf("[%d/%d] Uploading: %s%n", ++videosUploaded, numberOfVideos, musicVideo.getName());
+            // Add extra information to the video before uploading.
+            Video videoObjectDefiningMetadata = new Video();
 
-                    // Add extra information to the video before uploading.
-                    Video videoObjectDefiningMetadata = new Video();
+            // Set the video to be publicly visible. This is the default
+            // setting. Other supporting settings are "unlisted" and "private."
+            VideoStatus status = new VideoStatus();
+            status.setPrivacyStatus("public");
+            videoObjectDefiningMetadata.setStatus(status);
 
-                    // Set the video to be publicly visible. This is the default
-                    // setting. Other supporting settings are "unlisted" and "private."
-                    VideoStatus status = new VideoStatus();
-                    status.setPrivacyStatus("public");
-                    videoObjectDefiningMetadata.setStatus(status);
+            // Most of the video's metadata is set on the VideoSnippet object.
+            VideoSnippet snippet = new VideoSnippet();
 
-                    // Most of the video's metadata is set on the VideoSnippet object.
-                    VideoSnippet snippet = new VideoSnippet();
+            // This code uses a Calendar instance to create a unique name and
+            // description for test purposes so that you can easily upload
+            // multiple files. You should remove this code from your project
+            // and use your own standard names instead.
+            Calendar cal = Calendar.getInstance();
+            snippet.setTitle(musicVideo.getName());
+            snippet.setDescription(
+                    "Download link: " + song.getShortUrl());
 
-                    // This code uses a Calendar instance to create a unique name and
-                    // description for test purposes so that you can easily upload
-                    // multiple files. You should remove this code from your project
-                    // and use your own standard names instead.
-                    Calendar cal = Calendar.getInstance();
-                    snippet.setTitle(musicVideo.getName());
-                    snippet.setDescription(
-                            "Download link: " + song.getShortUrl());
+            // Set the keyword tags that you want to associate with the video.
+            snippet.setTags(song.getTags());
 
-                    // Set the keyword tags that you want to associate with the video.
-                    List<String> tags = ListUtils.union(band.getTags(), song.getTags());
-                    snippet.setTags(tags);
+            // Add the completed snippet object to the video resource.
+            videoObjectDefiningMetadata.setSnippet(snippet);
+            InputStreamContent mediaContent = new InputStreamContent(VIDEO_FILE_FORMAT, new FileInputStream(musicVideo.getPath()));
 
-                    // Add the completed snippet object to the video resource.
-                    videoObjectDefiningMetadata.setSnippet(snippet);
-                    InputStreamContent mediaContent = new InputStreamContent(VIDEO_FILE_FORMAT, new FileInputStream(musicVideo.getPath()));
+            // Insert the video. The command sends three arguments. The first
+            // specifies which information the API request is setting and which
+            // information the API response should return. The second argument
+            // is the video resource that contains metadata about the new video.
+            // The third argument is the actual video content.
+            YouTube.Videos.Insert videoInsert = youtube.videos()
+                    .insert("snippet,statistics,status", videoObjectDefiningMetadata, mediaContent);
 
-                    // Insert the video. The command sends three arguments. The first
-                    // specifies which information the API request is setting and which
-                    // information the API response should return. The second argument
-                    // is the video resource that contains metadata about the new video.
-                    // The third argument is the actual video content.
-                    YouTube.Videos.Insert videoInsert = youtube.videos()
-                            .insert("snippet,statistics,status", videoObjectDefiningMetadata, mediaContent);
+            // Set the upload type and add an event listener.
+            MediaHttpUploader uploader = videoInsert.getMediaHttpUploader();
 
-                    // Set the upload type and add an event listener.
-                    MediaHttpUploader uploader = videoInsert.getMediaHttpUploader();
+            // Indicate whether direct media upload is enabled. A value of
+            // "True" indicates that direct media upload is enabled and that
+            // the entire media content will be uploaded in a single request.
+            // A value of "False," which is the default, indicates that the
+            // request will use the resumable media upload protocol, which
+            // supports the ability to resume an upload operation after a
+            // network interruption or other transmission failure, saving
+            // time and bandwidth in the event of network failures.
+            uploader.setDirectUploadEnabled(false);
+            uploader.setChunkSize(MediaHttpUploader.MINIMUM_CHUNK_SIZE);
+            MediaHttpUploaderProgressListener progressListener = new MediaHttpUploaderProgressListener() {
+                public void progressChanged(MediaHttpUploader uploader) throws IOException {
+                    switch (uploader.getUploadState()) {
+                        case INITIATION_STARTED:
+                            //   System.out.println("Initiation Started");
+                            break;
+                        case INITIATION_COMPLETE:
+                            //   System.out.println("Initiation Completed");
+                            break;
+                        case MEDIA_IN_PROGRESS:
+                            double progress = (double) uploader.getNumBytesUploaded() / musicVideo.getSize() * 100;
+                            System.out.printf("    Upload percentage: %.2f%% \r", progress);
+                            break;
+                        case MEDIA_COMPLETE:
+                            System.out.println("    Youtube upload completed!");
+                            Files.delete(Paths.get(musicVideo.getPath()));
+                            break;
+                        case NOT_STARTED:
+                            System.out.println("    Upload Not Started!");
+                            break;
+                    }
+                }
+            };
+            uploader.setProgressListener(progressListener);
 
-                    // Indicate whether direct media upload is enabled. A value of
-                    // "True" indicates that direct media upload is enabled and that
-                    // the entire media content will be uploaded in a single request.
-                    // A value of "False," which is the default, indicates that the
-                    // request will use the resumable media upload protocol, which
-                    // supports the ability to resume an upload operation after a
-                    // network interruption or other transmission failure, saving
-                    // time and bandwidth in the event of network failures.
-                    uploader.setDirectUploadEnabled(false);
-                    uploader.setChunkSize(MediaHttpUploader.MINIMUM_CHUNK_SIZE);
-                    MediaHttpUploaderProgressListener progressListener = new MediaHttpUploaderProgressListener() {
-                        public void progressChanged(MediaHttpUploader uploader) throws IOException {
-                            switch (uploader.getUploadState()) {
-                                case INITIATION_STARTED:
-                                    //   System.out.println("Initiation Started");
-                                    break;
-                                case INITIATION_COMPLETE:
-                                    //   System.out.println("Initiation Completed");
-                                    break;
-                                case MEDIA_IN_PROGRESS:
-                                    double progress = (double) uploader.getNumBytesUploaded() / musicVideo.getSize() * 100;
-                                    System.out.printf("Upload percentage: %.2f%% \r", progress);
-                                    break;
-                                case MEDIA_COMPLETE:
-                                    System.out.println("Upload Completed!");
-                                    break;
-                                case NOT_STARTED:
-                                    System.out.println("Upload Not Started!");
-                                    break;
-                            }
-                        }
-                    };
-                    uploader.setProgressListener(progressListener);
+            // Call the API and upload the video.
+            Video returnedVideo = videoInsert.execute();
 
-                    // Call the API and upload the video.
-                    Video returnedVideo = videoInsert.execute();
-
-                    // Print data about the newly inserted video from the API response.
+            // Print data about the newly inserted video from the API response.
 //                    System.out.println("\n================== Returned Video ==================\n");
 //                    System.out.println("  - Id: " + returnedVideo.getId());
 //                    System.out.println("  - Title: " + returnedVideo.getSnippet().getTitle());
 //                    System.out.println("  - Tags: " + returnedVideo.getSnippet().getTags());
 //                    System.out.println("  - Privacy Status: " + returnedVideo.getStatus().getPrivacyStatus());
 //                    System.out.println("  - Video Count: " + returnedVideo.getStatistics().getViewCount());
-                    System.out.println("Uploaded successfully");
-                    String filePath = MyPaths.RESOURCES_PATH + "/uploadedSongs.txt";
-                    FileWriter fw = new FileWriter(filePath, true);
-                    fw.write(returnedVideo.getSnippet().getTitle() + "," + returnedVideo.getId() + "\r\n");
-                    fw.close();
+            System.out.println("    Uploaded successfully");
+            String filePath = MyPaths.RESOURCES_PATH + "/uploadedSongs.txt";
+            FileWriter fw = new FileWriter(filePath, true);
+            fw.write(returnedVideo.getSnippet().getTitle() + "," + returnedVideo.getId() + "\r\n");
+            fw.close();
 
-                } catch (GoogleJsonResponseException e) {
-                    System.err.println("GoogleJsonResponseException code: " + e.getDetails().getCode() + " : "
-                            + e.getDetails().getMessage());
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    System.err.println("IOException: " + e.getMessage());
-                    e.printStackTrace();
-                } catch (Throwable t) {
-                    System.err.println("Throwable: " + t.getMessage());
-                    t.printStackTrace();
-                }
-            }
+        } catch (GoogleJsonResponseException e) {
+            System.err.println("GoogleJsonResponseException code: " + e.getDetails().getCode() + " : "
+                    + e.getDetails().getMessage());
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("IOException: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Throwable t) {
+            System.err.println("Throwable: " + t.getMessage());
+            t.printStackTrace();
         }
     }
+
 }

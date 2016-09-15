@@ -11,6 +11,8 @@ import com.smegi.youtubeuploader.Model.Song;
 import com.smegi.youtubeuploader.uploads.DriveUpload;
 import com.smegi.youtubeuploader.uploads.UploadVideo;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,35 +20,32 @@ import java.util.List;
  */
 public class YoutubeUploader {
     
-    public static void main(String args[]) throws Exception {
+    public static void main(String args[]) {
 
         Search s = new Search();
         List<Band> bands = s.getBands(MyPaths.RESOURCES_PATH);
         List<Folder> folders = s.getFolders();
-
+        
+        
+        // Generate videos
         VideoGenerator vg = new VideoGenerator(bands);
         vg.Generate();
-
-        DriveUpload du = new DriveUpload();
-        du.upload(bands);
-
-        UploadVideo uv = new UploadVideo();
-        uv.upload(bands);
-
-        System.out.println("--------------------------------");
-        System.out.println("---------FINAL CONSOLE----------");
-
-        for (Band band : bands) {
-            System.out.println("Folder: " + band.getName() + " - " + band.getFolderId());
-            for (Song song : band.getSongs()) {
-                System.out.printf("%s - %s [%s]%n", band.getName(), song.getName(), song.getPath());
-            }
-        }
         
-        System.out.println("--------------------------------");
+        // Upload
+        upload(bands);
         
-        for (Folder folder : folders) {
-            System.out.printf("%s - %s %n", folder.getName(), folder.getId());
+    }
+
+    private static void upload(List<Band> bands) {
+        try {
+            DriveUpload du = new DriveUpload();
+            du.upload(bands);
+            
+            System.out.println("--------------------------------");
+            System.out.println("---------FINAL CONSOLE----------");
+        } catch (Exception ex) {
+            Logger.getLogger(YoutubeUploader.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 }
