@@ -7,9 +7,7 @@ package com.smegi.youtubeuploader;
 
 import com.smegi.youtubeuploader.Model.Band;
 import com.smegi.youtubeuploader.Model.Folder;
-import com.smegi.youtubeuploader.Model.Song;
 import com.smegi.youtubeuploader.uploads.DriveUpload;
-import com.smegi.youtubeuploader.uploads.UploadVideo;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
