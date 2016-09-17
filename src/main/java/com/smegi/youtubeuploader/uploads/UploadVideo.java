@@ -87,7 +87,7 @@ public class UploadVideo {
      *
      * @param bands
      */
-    public void upload(Song song) throws Exception {
+    public boolean upload(Song song) throws Exception {
         this.bands = bands;
         // This OAuth 2.0 access scope allows an application to upload files
         // to the authenticated user's YouTube channel, but doesn't allow
@@ -188,17 +188,22 @@ public class UploadVideo {
             FileWriter fw = new FileWriter(filePath, true);
             fw.write(returnedVideo.getSnippet().getTitle() + "," + returnedVideo.getId() + "\r\n");
             fw.close();
-
+            return true;
         } catch (GoogleJsonResponseException e) {
             System.err.println("GoogleJsonResponseException code: " + e.getDetails().getCode() + " : "
                     + e.getDetails().getMessage());
             e.printStackTrace();
+            return false;
         } catch (IOException e) {
+            
             System.err.println("IOException: " + e.getMessage());
             e.printStackTrace();
+            return false;
         } catch (Throwable t) {
+            
             System.err.println("Throwable: " + t.getMessage());
             t.printStackTrace();
+            return false;
         }
     }
 

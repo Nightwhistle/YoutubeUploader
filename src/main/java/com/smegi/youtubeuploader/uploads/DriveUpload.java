@@ -207,9 +207,17 @@ public class DriveUpload {
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }
-                uv.upload(song);
 
-                Files.delete(Paths.get(song.getPath()));
+                // If video is successfully uploaded to youtube delete local MP3, if not delete file on drive
+                if (uv.upload(song)) {
+                    Files.delete(Paths.get(song.getPath()));
+                } else {
+                    try {
+                        service.files().delete(fileTest.getId()).execute();
+                    } catch (IOException e) {
+                        System.out.println("An error occurred: " + e);
+                    }
+                }
 
             }
         }
