@@ -44,7 +44,7 @@ public class DriveUpload {
      * Application name.
      */
     private static final String APPLICATION_NAME
-            = "Drive API Java Quickstart";
+            = "YoutubeUploader";
 
     /**
      * Directory to store user credentials for this application.

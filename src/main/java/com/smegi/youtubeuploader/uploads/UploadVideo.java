@@ -14,10 +14,14 @@
 package com.smegi.youtubeuploader.uploads;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.googleapis.media.MediaHttpUploader;
 import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener;
+import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.InputStreamContent;
+import com.google.api.services.sqladmin.SQLAdminScopes;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoSnippet;
@@ -28,17 +32,18 @@ import com.smegi.youtubeuploader.Model.MusicVideo;
 import com.smegi.youtubeuploader.Model.Song;
 import com.smegi.youtubeuploader.MyPaths;
 import com.smegi.youtubeuploader.Search;
+import static com.smegi.youtubeuploader.uploads.Auth.JSON_FACTORY;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.collections.ListUtils;
 
 /**
  * Upload a video to the authenticated user's channel. Use OAuth 2.0 to
@@ -71,10 +76,26 @@ public class UploadVideo {
 
     public UploadVideo() {
         try {
-            List<String> scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube.upload");
-            Credential credential = Auth.authorize(scopes, "uploadvideo");
+            scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube");
+            System.out.println("--------- SCOPES ---------");
+            for (String scope:scopes) {
+                System.out.println("SCOPES: "+scope);
+            }
+            credential = Auth.authorize(scopes, "uploadvideo");
+//            HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+//
+//            GoogleCredential credential = new GoogleCredential.Builder()
+//                    .setTransport(httpTransport)
+//                    .setJsonFactory(JSON_FACTORY)
+//                    .setServiceAccountId("youtubeuploader-140320@appspot.gserviceaccount.com")
+//                    .setServiceAccountPrivateKeyFromP12File(new File("src/main/resources/YoutubeUploader-f6150ec16cc5.p12"))
+//                    .setServiceAccountScopes(Collections.singleton(SQLAdminScopes.SQLSERVICE_ADMIN))
+//                    .setServiceAccountUser("smegibrn2@gmail.com")
+//                    .build();
+
             youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, credential).setApplicationName(
                     "youtube-cmdline-uploadvideo-sample").build();
+
         } catch (Exception ex) {
             Logger.getLogger(UploadVideo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -111,11 +132,6 @@ public class UploadVideo {
             // Most of the video's metadata is set on the VideoSnippet object.
             VideoSnippet snippet = new VideoSnippet();
 
-            // This code uses a Calendar instance to create a unique name and
-            // description for test purposes so that you can easily upload
-            // multiple files. You should remove this code from your project
-            // and use your own standard names instead.
-            Calendar cal = Calendar.getInstance();
             snippet.setTitle(musicVideo.getName());
             snippet.setDescription(
                     "Download link: " + song.getShortUrl());
@@ -195,12 +211,12 @@ public class UploadVideo {
             e.printStackTrace();
             return false;
         } catch (IOException e) {
-            
+
             System.err.println("IOException: " + e.getMessage());
             e.printStackTrace();
             return false;
         } catch (Throwable t) {
-            
+
             System.err.println("Throwable: " + t.getMessage());
             t.printStackTrace();
             return false;

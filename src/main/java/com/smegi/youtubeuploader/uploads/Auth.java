@@ -54,7 +54,7 @@ public class Auth {
     public static Credential authorize(List<String> scopes, String credentialDatastore) throws IOException, Exception {
 
         // Load client secrets.  
-        Reader clientSecretReader = new InputStreamReader(new FileInputStream (new File(MyPaths.CLIENT_SECRETS_PATH)));
+        Reader clientSecretReader = new InputStreamReader(new FileInputStream (new File(MyPaths.YOUTUBE_SECRETS_PATH)));
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, clientSecretReader);
 
         // Checks that the defaults have been replaced (Default = "Enter X here").
