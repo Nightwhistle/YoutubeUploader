@@ -13,34 +13,25 @@
  */
 package com.smegi.youtubeuploader.uploads;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.googleapis.media.MediaHttpUploader;
 import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener;
-import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.InputStreamContent;
-import com.google.api.services.sqladmin.SQLAdminScopes;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatus;
-import com.google.common.collect.Lists;
 import com.smegi.youtubeuploader.Model.Band;
 import com.smegi.youtubeuploader.Model.MusicVideo;
 import com.smegi.youtubeuploader.Model.Song;
 import com.smegi.youtubeuploader.MyPaths;
 import com.smegi.youtubeuploader.Search;
-import static com.smegi.youtubeuploader.uploads.Auth.JSON_FACTORY;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,45 +48,17 @@ public class UploadVideo {
     private int videosUploaded = 0;
     private int numberOfVideos = Search.numberOfSongs;
 
-    /**
-     * Define a global instance of a Youtube object, which will be used to make
-     * YouTube Data API requests.
-     */
+    
     private static YouTube youtube;
 
-    /**
-     * Define a global variable that specifies the MIME type of the video being
-     * uploaded.
-     */
+    
     private static final String VIDEO_FILE_FORMAT = "video/*";
-
-    private static final String SAMPLE_VIDEO_FILENAME = "sample-video.mp4";
+    
     private List<Band> bands;
-    private List<String> scopes;
-    private Credential credential;
 
     public UploadVideo() {
         try {
-            scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube");
-            System.out.println("--------- SCOPES ---------");
-            for (String scope:scopes) {
-                System.out.println("SCOPES: "+scope);
-            }
-            credential = Auth.authorize(scopes, "uploadvideo");
-//            HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
-//
-//            GoogleCredential credential = new GoogleCredential.Builder()
-//                    .setTransport(httpTransport)
-//                    .setJsonFactory(JSON_FACTORY)
-//                    .setServiceAccountId("youtubeuploader-140320@appspot.gserviceaccount.com")
-//                    .setServiceAccountPrivateKeyFromP12File(new File("src/main/resources/YoutubeUploader-f6150ec16cc5.p12"))
-//                    .setServiceAccountScopes(Collections.singleton(SQLAdminScopes.SQLSERVICE_ADMIN))
-//                    .setServiceAccountUser("smegibrn2@gmail.com")
-//                    .build();
-
-            youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, credential).setApplicationName(
-                    "youtube-cmdline-uploadvideo-sample").build();
-
+            youtube = YouTubeAuthorize.getDriveService();
         } catch (Exception ex) {
             Logger.getLogger(UploadVideo.class.getName()).log(Level.SEVERE, null, ex);
         }
