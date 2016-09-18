@@ -13,7 +13,6 @@
  */
 package com.smegi.youtubeuploader.uploads;
 
-import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.googleapis.media.MediaHttpUploader;
 import com.google.api.client.googleapis.media.MediaHttpUploaderProgressListener;
@@ -22,7 +21,6 @@ import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatus;
-import com.google.common.collect.Lists;
 import com.smegi.youtubeuploader.Model.Band;
 import com.smegi.youtubeuploader.Model.MusicVideo;
 import com.smegi.youtubeuploader.Model.Song;
@@ -38,7 +36,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.apache.commons.collections.ListUtils;
 
 /**
  * Upload a video to the authenticated user's channel. Use OAuth 2.0 to
@@ -52,29 +49,18 @@ public class UploadVideo {
     private int videosUploaded = 0;
     private int numberOfVideos = Search.numberOfSongs;
 
-    /**
-     * Define a global instance of a Youtube object, which will be used to make
-     * YouTube Data API requests.
-     */
+    
     private static YouTube youtube;
 
-    /**
-     * Define a global variable that specifies the MIME type of the video being
-     * uploaded.
-     */
+    
     private static final String VIDEO_FILE_FORMAT = "video/*";
-
-    private static final String SAMPLE_VIDEO_FILENAME = "sample-video.mp4";
+    
     private List<Band> bands;
-    private List<String> scopes;
-    private Credential credential;
 
     public UploadVideo() {
         try {
-            List<String> scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube.upload");
-            Credential credential = Auth.authorize(scopes, "uploadvideo");
-            youtube = new YouTube.Builder(Auth.HTTP_TRANSPORT, Auth.JSON_FACTORY, credential).setApplicationName(
-                    "youtube-cmdline-uploadvideo-sample").build();
+            
+            youtube = YouTubeAuthorize.getDriveService();
         } catch (Exception ex) {
             Logger.getLogger(UploadVideo.class.getName()).log(Level.SEVERE, null, ex);
         }
