@@ -8,6 +8,8 @@ package com.smegi.youtubeuploader;
 import com.smegi.youtubeuploader.Model.Band;
 import com.smegi.youtubeuploader.Model.Folder;
 import com.smegi.youtubeuploader.uploads.DriveUpload;
+import java.awt.FontFormatException;
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,16 +24,16 @@ public class YoutubeUploader {
 
         Search s = new Search();
         List<Band> bands = s.getBands(MyPaths.RESOURCES_PATH);
-        List<Folder> folders = s.getFolders();
-        
-        
+    //    List<Folder> folders = s.getFolders();
+
         // Generate videos
         VideoGenerator vg = new VideoGenerator(bands);
         vg.Generate();
         
         // Upload
         upload(bands);
-        
+  
+       
     }
 
     private static void upload(List<Band> bands) {

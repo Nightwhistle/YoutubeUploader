@@ -30,7 +30,9 @@ public class TagsGenerator {
 
         String[] songNameArray = songName.split(" ");
         for (String tag : songNameArray) {
-            if (tag.length() < 2) continue;
+            if (tag.length() < 2) {
+                continue;
+            }
             tags.add(tag);
         }
 
@@ -39,23 +41,22 @@ public class TagsGenerator {
 
             for (String tag : Files.readAllLines(Paths.get(MyPaths.DEFAULT_TAGS_PATH))) {
                 tag = tag.replaceAll("[^A-Za-z0-9 ]", "");
-                if (tag.length() < 2) continue;
+                if (tag.length() < 2) {
+                    continue;
+                }
                 tags.add(tag);
             }
-            
+
             for (String tag : Files.readAllLines(Paths.get(song.getParentFile().getAbsolutePath() + "/tags.txt"))) {
                 tag = tag.replaceAll("[^A-Za-z0-9 ]", "");
-                if (tag.length() < 2) continue;
+                if (tag.length() < 2) {
+                    continue;
+                }
                 tags.add(tag);
             }
         } catch (IOException ex) {
             Logger.getLogger(TagsGenerator.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.print("Tags: ");
-        for (String tag : tags) {
-            System.out.print(tag + " ");
-        }
-        System.out.println("");
         return tags;
     }
 
