@@ -29,7 +29,7 @@ public class YoutubeUploader {
         vg.Generate();
 
         // Upload
-     //   upload(bands);
+        upload(bands);
 
     }
 
@@ -39,7 +39,7 @@ public class YoutubeUploader {
             du.upload(bands);
 
             System.out.println("--------------------------------");
-            System.out.println("---------FINAL CONSOLE----------");
+            System.out.println("----------=FINISHED=------------");
         } catch (Exception ex) {
             Logger.getLogger(YoutubeUploader.class.getName()).log(Level.SEVERE, null, ex);
         }
