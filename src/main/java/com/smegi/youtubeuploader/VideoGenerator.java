@@ -24,10 +24,14 @@ public class VideoGenerator {
         try {
             for (Band band : bands) {
                 for (Song song : band.getSongs()) {
-
-                    String imagePath = band.getBackground();
+                    
+                    String imagePath = band.getBackground();                    
                     String audioPath = song.getPath();
                     String outPath = band.getPath() + "\\" +song.getName().substring(0, song.getName().length()-4) + ".mp4";
+                    
+                    // Create background image
+                    ImageGenerator ig = new ImageGenerator(imagePath, band.getName(), song.getName());
+                    imagePath = ig.generateImage();
                     // Skipping duplicates, 1FPS, libx264 video codec and copy audio in same folder where sources are
                     String[] cmd = {"ffmpeg", "-hide_banner", "-n", "-loop", "1", "-framerate", "1", "-i", imagePath, "-i", audioPath, "-c:v", "libx264", "-tune", "stillimage", "-c:a", "copy", "-strict", "experimental", "-b:a", "192k", "-pix_fmt", "yuv420p", "-shortest", outPath};
 

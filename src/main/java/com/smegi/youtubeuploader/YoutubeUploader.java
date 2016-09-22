@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * @author Sergej
  */
 public class YoutubeUploader {
-    
+
     public static void main(String args[]) {
 
         Search s = new Search();
@@ -27,18 +27,17 @@ public class YoutubeUploader {
         // Generate videos
         VideoGenerator vg = new VideoGenerator(bands);
         vg.Generate();
-        
+
         // Upload
-        upload(bands);
-  
-       
+     //   upload(bands);
+
     }
 
     private static void upload(List<Band> bands) {
         try {
             DriveUpload du = new DriveUpload();
             du.upload(bands);
-            
+
             System.out.println("--------------------------------");
             System.out.println("---------FINAL CONSOLE----------");
         } catch (Exception ex) {
