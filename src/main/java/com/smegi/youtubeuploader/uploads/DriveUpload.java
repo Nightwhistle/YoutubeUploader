@@ -24,7 +24,6 @@ public class DriveUpload {
     private int numberOfSongs = Search.numberOfSongs;
     private int songsUploaded = 0;
 
-
     // create new folder on Google Drive if its not already created (not in folders.txt)
     private void createFolder(Band band) {
         if (!folderExists(band.getName())) {
@@ -103,16 +102,24 @@ public class DriveUpload {
                 try {
                     Thread.sleep(2000);                 //2 seconds
                 } catch (InterruptedException ex) {
+                    System.out.println("Interrupted exception in DriveUpload class");
                     Thread.currentThread().interrupt();
                 }
 
                 // If video is successfully uploaded to youtube delete local MP3, if not delete file on drive
                 if (uv.upload(song)) {
-                    Files.delete(Paths.get(song.getPath()));
+                    java.io.File songFile = new java.io.File(song.getPath());
+                    if (!songFile.canWrite()) {
+                        System.out.println("File was read-only, setting to writable and deleting");
+                        songFile.setReadOnly();
+                    }
+                    songFile.delete();
                 } else {
                     try {
                         service.files().delete(fileTest.getId()).execute();
                     } catch (IOException e) {
+                        System.out.println("IOexception in DriveUpload class");
+
                         System.out.println("An error occurred: " + e);
                     }
                 }
